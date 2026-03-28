@@ -1,0 +1,34 @@
+<div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+	<h2 class="settings-title" id="settingsTitle">Spectrogram Settings</h2>
+	<div class="settings-content">
+		<div class="settings-section">
+			<label class="settings-label" for="colormap">Colormap</label>
+			<select id="colormap" class="field select-field">
+				<option value="gray">gray</option>
+				<option value="igray">igray</option>
+				<option value="roseus" selected>roseus</option>
+			</select>
+		</div>
+
+		<div class="settings-section">
+			<span class="settings-label">Frequency Range (Hz)</span>
+			<div class="row">
+				<label for="minFreq">Min:</label>
+				<input id="minFreq" class="field number-field" type="number" min="0" max="20000" value="20">
+				<label for="maxFreq">Max:</label>
+				<input id="maxFreq" class="field number-field" type="number" min="0" max="20000" value="6000">
+			</div>
+		</div>
+
+		<div class="settings-section">
+			<label class="settings-label" for="dbRange">Dynamic Range (dB)</label>
+			<div class="range-wrap">
+				<input id="dbRange" type="range" min="20" max="150" value="60" data-value-target="dbRangeValue">
+				<span id="dbRangeValue" class="value-pill">60</span>
+			</div>
+		</div>
+	</div>
+	<div class="settings-footer">
+		<button type="button" class="enter-btn" id="settingsEnterBtn">Enter</button>
+	</div>
+</div>
