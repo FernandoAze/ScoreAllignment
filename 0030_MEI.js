@@ -134,7 +134,30 @@ async function handleMeiFileSelection(meiFile) {
         const meiArea = document.querySelector('.mei-area');
         if (meiArea) {
             meiArea.innerHTML = '<div class="mei-svg-host"></div>';
-            meiArea.querySelector('.mei-svg-host').innerHTML = svg;
+            const host = meiArea.querySelector('.mei-svg-host');
+            host.innerHTML = svg;
+
+            // Setup the highlight functionality targeting only elements with data-class="note"
+            host.addEventListener('mouseover', (e) => {
+                const targetNote = e.target.closest('[class*="note"]'); 
+                // Verovio often uses classes directly, but let's check for attribute data-class="note" too
+                const targetNoteByDataClass = e.target.closest('[data-class="note"]');
+                const note = targetNoteByDataClass || targetNote;
+                
+                if (note) {
+                    note.classList.add('note-hover-highlight');
+                }
+            });
+
+            host.addEventListener('mouseout', (e) => {
+                const targetNote = e.target.closest('[class*="note"]');
+                const targetNoteByDataClass = e.target.closest('[data-class="note"]');
+                const note = targetNoteByDataClass || targetNote;
+                
+                if (note) {
+                    note.classList.remove('note-hover-highlight');
+                }
+            });
         }
     } catch (error) {
         console.error('Error rendering MEI file:', error);
