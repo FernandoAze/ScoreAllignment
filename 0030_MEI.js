@@ -18,9 +18,11 @@ fetch('0031_MEI.html')
 class MeiSvgRenderer {
     constructor(toolkitOptions = {}) {
         const defaultOptions = {
+            svgHtml5: true,
             scale: 40,
-            pageWidth: 40000,
-            pageHeight: 2000,
+            breaks: 'none', 
+            header: 'none',
+            footer: 'none',
             adjustPageHeight: true,
             ...toolkitOptions
         };
