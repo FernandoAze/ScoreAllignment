@@ -158,6 +158,18 @@ async function handleMeiFileSelection(meiFile) {
                     note.classList.remove('note-hover-highlight');
                 }
             });
+
+            // Setup click handler for notes
+            host.addEventListener('click', (e) => {
+                const targetNote = e.target.closest('[class*="note"]');
+                const targetNoteByDataClass = e.target.closest('[data-class="note"]');
+                const note = targetNoteByDataClass || targetNote;
+                
+                if (note) {
+                    const elementId = note.getAttribute('data-id');
+                    console.log('You have hit element:', elementId);
+                }
+            });
         }
     } catch (error) {
         console.error('Error rendering MEI file:', error);
