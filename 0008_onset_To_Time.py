@@ -111,12 +111,14 @@ def write_annotated_mei(tree, original_file_path):
     output_path = original_path.parent / output_filename
     
     # Write the modified tree to file
+    # Ensure the MEI namespace is registered so output uses the expected prefix
+    ET.register_namespace("mei", MEI_NAMESPACE)
+
     # Preserve XML declaration by using the default encoding
     tree.write(
         str(output_path),
         encoding="UTF-8",
-        xml_declaration=True,
-        default_namespace=MEI_NAMESPACE
+        xml_declaration=True
     )
     
     print(f"✓ Created annotated MEI file: {output_path}")
