@@ -4,6 +4,7 @@ let wavesurfer = null;
 let regionsPlugin = null;
 let wheelZoomHandler = null;
 let regionCounter = 0;
+const regionToNoteMap = {}; // Maps region id to note id
 const SPECTROGRAM_VERTICAL_PADDING = 15; //Pad necessary to make the panning slider visible and interactive
 
 function sendInfo(text) {
@@ -105,24 +106,59 @@ window.addEventListener("audioFileSelected", (event) => {
 	regionsPlugin.on("region-created", (region) => {
 		regionCounter += 1;
 		const timeFormatted = region.start.toFixed(2);
-		console.log(`Time instance ${regionCounter} with time ${timeFormatted}`);
+		const linkedNoteId = regionToNoteMap[region.id];
+		const labelInfo = linkedNoteId ? ` - linked to note: ${linkedNoteId}` : "";
+		console.log(`Time instance ${regionCounter} with time ${timeFormatted}${labelInfo}`);
 	});
 
 	regionsPlugin.on("region-updated", (region) => {
 		const timeFormatted = region.start.toFixed(2);
-		console.log(`Time instance updated with time ${timeFormatted}`);
+		const linkedNoteId = regionToNoteMap[region.id];
+		const labelInfo = linkedNoteId ? ` - linked to note: ${linkedNoteId}` : "";
+		console.log(`Time instance updated with time ${timeFormatted}${labelInfo}`);
 	});
 
 	// Listen for comma key to create time instances
 	document.addEventListener("keydown", (event) => {
 		if (event.key === ",") {
 			const currentTime = wavesurfer.getCurrentTime();
-			regionsPlugin.addRegion({
+			const regionConfig = {
 				start: currentTime,
 				color: "rgb(255, 234, 0)",
+				content: "un-linked instance",
 				drag: true,
 				resize: false,
-			});
+			};
+			
+			// Create the region
+			const region = regionsPlugin.addRegion(regionConfig);
+			
+			// If a note is selected, store the mapping and update visuals
+			if (window.selectedNoteId) {
+				regionToNoteMap[region.id] = window.selectedNoteId;
+				
+				// Set the content property on the region to display the note ID
+				region.content = window.selectedNoteId;
+				
+				// Update the visible content in the DOM element
+				if (region.element) {
+					const contentEl = region.element.querySelector('[data-region-content]');
+					if (contentEl) {
+						contentEl.textContent = window.selectedNoteId;
+					}
+				}
+				
+				// Change region color to green
+				region.color = "rgba(0, 255, 0, 0.3)";
+				
+				// Dispatch event to MEI module to change note color
+				const syncEvent = new CustomEvent("regionSynced", {
+					detail: { noteId: window.selectedNoteId, regionId: region.id }
+				});
+				document.dispatchEvent(syncEvent);
+				
+				console.log(`Linked region ${region.id} to note: ${window.selectedNoteId}`);
+			}
 		}
 	});
 

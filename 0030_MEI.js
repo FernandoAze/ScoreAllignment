@@ -182,6 +182,23 @@ async function handleMeiFileSelection(meiFile) {
                     console.log('You have hit element:', elementId);
                     // Store the note ID in a global variable accessible to other scripts
                     window.selectedNoteId = elementId;
+                    console.log('window.selectedNoteId is now:', window.selectedNoteId);
+                }
+            });
+
+            // Listen for region sync events to change note color
+            document.addEventListener('regionSynced', (e) => {
+                const { noteId } = e.detail;
+                // Search from the meiArea since host is local scope
+                const syncedNote = meiArea.querySelector(`[data-id="${noteId}"]`);
+                if (syncedNote) {
+                    syncedNote.classList.add('note-synced');
+                    // Change the fill color to green by updating the element directly
+                    syncedNote.setAttribute('fill', 'rgba(0, 255, 0, 0.8)');
+                    syncedNote.style.fill = 'rgba(0, 255, 0, 0.8)';
+                    console.log(`Note ${noteId} synced and colored green`);
+                } else {
+                    console.log(`Could not find note element with id: ${noteId}`);
                 }
             });
         }

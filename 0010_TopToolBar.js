@@ -34,10 +34,10 @@ function handleCommand(command) {
                 .catch((error) => console.error("Could not open settings menu:", error));
 			break;
 		case "play-toggle":
-			sendInfo("This Play/Pause button does not havefunciton yet. You can hit the audio to play/pause.");
+			sendInfo("");
 			break;
 		case "stop":
-			sendInfo("The Stop button was not implemented yet.");
+			sendInfo("");
 			break;
 		case "quit":
 			sendInfo("Quit shall be removed");
