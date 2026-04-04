@@ -1,6 +1,9 @@
 // Module-level variables
 let spectrogramEl = null;
+let wavesurfer = null;
+let regionsPlugin = null;
 let wheelZoomHandler = null;
+let regionCounter = 0;
 const SPECTROGRAM_VERTICAL_PADDING = 15; //Pad necessary to make the panning slider visible and interactive
 
 function sendInfo(text) {
@@ -46,9 +49,11 @@ window.addEventListener("audioFileSelected", (event) => {
 	}
 
 
-	const TimelinePlugin = window.WaveSurfer.Timeline; 
+	const TimelinePlugin = window.WaveSurfer.Timeline;
 
-    const wavesurfer = window.WaveSurfer.create({
+	regionsPlugin = window.WaveSurfer.Regions.create();
+
+    wavesurfer = window.WaveSurfer.create({
         container: "#spectrogramCanvas",
         url: url,  // The audio blob URL
 		progressColor: "#ffffff",
@@ -68,11 +73,57 @@ window.addEventListener("audioFileSelected", (event) => {
 					color: "#33ff00",
 				},
 			}),
+			regionsPlugin,
 		],
     });
 
-	wavesurfer.on("interaction", () => {
-    		wavesurfer.playPause();
+	// Wire up Play/Pause button from toolbar
+	const playBtn = document.getElementById("playBtn");
+	const stopBtn = document.getElementById("stopBtn");
+	
+	if (playBtn) {
+		playBtn.addEventListener("click", () => {
+			wavesurfer.playPause();
+		});
+		
+		wavesurfer.on("play", () => {
+			playBtn.textContent = "Pause";
+		});
+		
+		wavesurfer.on("pause", () => {
+			playBtn.textContent = "Play";
+		});
+	}
+	
+	if (stopBtn) {
+		stopBtn.addEventListener("click", () => {
+			wavesurfer.stop();
+		});
+	}
+
+	// Log regions when they are created or updated
+	regionsPlugin.on("region-created", (region) => {
+		regionCounter += 1;
+		const timeFormatted = region.start.toFixed(2);
+		console.log(`Time instance ${regionCounter} with time ${timeFormatted}`);
+	});
+
+	regionsPlugin.on("region-updated", (region) => {
+		const timeFormatted = region.start.toFixed(2);
+		console.log(`Time instance updated with time ${timeFormatted}`);
+	});
+
+	// Listen for comma key to create time instances
+	document.addEventListener("keydown", (event) => {
+		if (event.key === ",") {
+			const currentTime = wavesurfer.getCurrentTime();
+			regionsPlugin.addRegion({
+				start: currentTime,
+				color: "rgb(255, 234, 0)",
+				drag: true,
+				resize: false,
+			});
+		}
 	});
 
 	//Zoom functionality for spectrogram

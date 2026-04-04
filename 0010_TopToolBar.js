@@ -42,12 +42,25 @@ function handleCommand(command) {
 		case "quit":
 			sendInfo("Quit shall be removed");
 			break;
+		case "export-synced-mei":
+			exportSyncedMei();
+			break;
 		default:
 			break;
 	}
 }
 
 window.BA_spectrogramCommand = handleCommand;
+
+// Placeholder function for exporting synced MEI with time stamps
+function exportSyncedMei() {
+    // TODO: Implement export functionality
+    // This function should:
+    // 1. Gather the current MEI data and time synchronization mappings
+    // 2. Generate an export file with MEI and timestamp information
+    // 3. Trigger file download to user
+    sendInfo("Export MEI & Time Stamps functionality - TO BE IMPLEMENTED");
+}
 
 function openFilePicker() {
     const audioInput = document.getElementById("audioFileInput");
@@ -94,6 +107,10 @@ function attachToolbarEventListeners() {
     
     document.getElementById("quitBtn").addEventListener("click", () => {
         window.BA_spectrogramCommand?.("quit");
+    });
+
+    document.getElementById("exportSyncedMeiBtn").addEventListener("click", () => {
+        window.BA_spectrogramCommand?.("export-synced-mei");
     });
 
     // Set up MEI file input handler

@@ -136,6 +136,9 @@ async function handleMeiFileSelection(meiFile) {
             meiArea.innerHTML = '<div class="mei-svg-host"></div>';
             const host = meiArea.querySelector('.mei-svg-host');
             host.innerHTML = svg;
+            
+            // Track the currently selected note
+            let currentlySelectedNote = null;
 
             // Setup the highlight functionality targeting only elements with data-class="note"
             host.addEventListener('mouseover', (e) => {
@@ -166,8 +169,19 @@ async function handleMeiFileSelection(meiFile) {
                 const note = targetNoteByDataClass || targetNote;
                 
                 if (note) {
+                    // Remove the selected class from the previously selected note
+                    if (currentlySelectedNote) {
+                        currentlySelectedNote.classList.remove('note-selected');
+                    }
+                    
+                    // Add the selected class to the newly clicked note
+                    note.classList.add('note-selected');
+                    currentlySelectedNote = note;
+                    
                     const elementId = note.getAttribute('data-id');
                     console.log('You have hit element:', elementId);
+                    // Store the note ID in a global variable accessible to other scripts
+                    window.selectedNoteId = elementId;
                 }
             });
         }
